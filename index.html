@@ -3,8 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>draft</title>
-<!-- 2016-11-23 Wed 21:51 -->
+<title>index</title>
+<!-- 2016-11-24 Thu 15:15 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Ahmad Jarara" />
@@ -137,22 +137,22 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">draft</h1>
+<h1 class="title">index</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Questions:</a>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Questions:</a>
 <ul>
-<li><a href="#sec-1-1">1.1. Slide format</a></li>
-<li><a href="#sec-1-2">1.2. Some tooling for the data</a></li>
-<li><a href="#sec-1-3">1.3. Rooms</a>
+<li><a href="#sec-2-1">2.1. Slide format</a></li>
+<li><a href="#sec-2-2">2.2. Some tooling for the data</a></li>
+<li><a href="#sec-2-3">2.3. Rooms</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1. Basement</a></li>
-<li><a href="#sec-1-3-2">1.3.2. WoodDeck</a></li>
-<li><a href="#sec-1-3-3">1.3.3. 2nd Floor</a></li>
-<li><a href="#sec-1-3-4">1.3.4. Open Porch</a></li>
-<li><a href="#sec-1-3-5">1.3.5. Street Access</a></li>
+<li><a href="#sec-2-3-1">2.3.1. Basement</a></li>
+<li><a href="#sec-2-3-2">2.3.2. 2nd Floor</a></li>
+<li><a href="#sec-2-3-3">2.3.3. Open Porch</a></li>
+<li><a href="#sec-2-3-4">2.3.4. Street Access</a></li>
 </ul>
 </li>
 </ul>
@@ -161,8 +161,17 @@ for the JavaScript code in this tag.
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Questions:</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
+<p>
+What follows is a small compilation of just some exploratory analysis I've done. Let me know if you'd like anything to be published, right now all I'm doing is separating out the data. One thing I'd like to make note of eventually is the correlation between features of the house. It's clear that having a porch or a 2nd floor effects the price positively, but I'm sure there is some correlation between the two. There probably exists some degree of correlation between all the features of the house. It's just a matter of what are the ones that affect pricing the most. I don't really know how to structure the analysis, something I'd welcome feedback on. As for now, I'm just going to get basic info.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Questions:</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 In what ways does the data affect pricing?
 Are there any correlations between the variables themselves?
@@ -170,49 +179,57 @@ Distributions of each variable irrespective of their affiliations
 Outliers?
 </p>
 </div>
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Slide format</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Slide format</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+So LaTeX has a presentation mode, which the professor uses. There are a lot of themes, but the default theme is probably the best looking.
+</p>
+
 <p>
 Using the Beamer class, pittsburg theme or bust (aka default theme)
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Some tooling for the data</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Some tooling for the data</h3>
+<div class="outline-text-3" id="text-2-2">
 <p>
-Data frame indexing
-</p>
-
-<p>
-Let's say you would like to slice the data we have by quantiles, and contrast.
-</p>
-</div>
-</div>
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Rooms</h3>
-<div class="outline-text-3" id="text-1-3">
-<p>
-SalePrice is definitely affected by presence of specific rooms.
-So far it might be categorical.
-</p>
-
-<p>
-All the code blocks assume the following:
+All the code blocks after this section assume the following:
 </p>
 <pre class="example">
 dat = read.csv("BHD.csv")
 </pre>
 
 <p>
-The distribution parameter sections use the fitdistrplus library to find a distribution, and then 
+Data frame indexing. Let's say you want to get only the apartments in Mitchel. It's quite simple to get this:
+</p>
+<pre class="example">
+dat[dat$Neighborhood == "Mitchel",]
+</pre>
+
+<p>
+The last comma is necessary, it is used to get the columns. In fact, you can use this to immediately get the data for a specific neighborhood, but this is a little tedious as you have to refer to the column names by numbers (ie SalePrice is column 1, WoodDeckSF is column 4, etc.)
+</p>
+
+<pre class="example">
+mean(dat[dat$Neighborhood == "Mitchel", 1]) # 156,270
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Rooms</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+SalePrice is definitely affected by presence of specific features of the house. Not sure whether the influence is categorical.
 </p>
 </div>
-<div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Basement</h4>
-<div class="outline-text-4" id="text-1-3-1">
-</div><ol class="org-ol"><li><a id="sec-1-3-1-1" name="sec-1-3-1-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-1-1">
+
+<div id="outline-container-sec-2-3-1" class="outline-4">
+<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> Basement</h4>
+<div class="outline-text-4" id="text-2-3-1">
+</div><ol class="org-ol"><li><a id="sec-2-3-1-1" name="sec-2-3-1-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-2-3-1-1">
 <pre class="example">
 hasbasement = dat[dat$BsmtSF != 0,] # has a basement 
 nobasement = dat[dat$BsmtSF == 0,] # doesn't have a basement
@@ -224,7 +241,7 @@ mean(hasbasement$SalePrice) - mean(nobasement$SalePrice) # 22,645
 </div>
 </li>
 
-<li><a id="sec-1-3-1-2" name="sec-1-3-1-2"></a>Distribution parameters<br  /><div class="outline-text-5" id="text-1-3-1-2">
+<li><a id="sec-2-3-1-2" name="sec-2-3-1-2"></a>Distribution parameters<br  /><div class="outline-text-5" id="text-2-3-1-2">
 <p>
 Uh&#x2026; the cullen and Frey graph does not show anything that is coherent. Possibilities include trimming the exteriors.
 </p>
@@ -242,14 +259,13 @@ descdist(hasbasement$BsmtSF)
 # estimated skewness:  2.302275 
 # estimated kurtosis:  24.32368
 </pre>
-</div>
-</li></ol>
-</div>
 
-<div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> WoodDeck</h4>
-<div class="outline-text-4" id="text-1-3-2">
-</div><ol class="org-ol"><li><a id="sec-1-3-2-1" name="sec-1-3-2-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-2-1">
+<p>
+<a href="./img/descdistBasementSF.png">The descdist produces this image</a>.
+</p>
+</div>
+</li>
+<li><a id="sec-2-3-1-3" name="sec-2-3-1-3"></a>Categorical data<br  /><div class="outline-text-5" id="text-2-3-1-3">
 <pre class="example">
 hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
 noDeck = dat[dat$WoodDeckSF == 0,] # doesn't have a wood deck
@@ -259,13 +275,34 @@ nrow(dat) == nrow(hasDeck) + nrow(noDeck) # TRUE
 mean(hasDeck$SalePrice) - mean(noDeck$SalePrice) # 47,320
 </pre>
 </div>
+</li>
+
+<li><a id="sec-2-3-1-4" name="sec-2-3-1-4"></a>Distribution parameters<br  /><div class="outline-text-5" id="text-2-3-1-4">
+<pre class="example">
+hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
+
+descdist(hasDeck$WoodDeckSF)
+
+# summary statistics
+# ------
+# min:  12   max:  857 
+# median:  171 
+# mean:  196.8484 
+# estimated sd:  112.2997 
+# estimated skewness:  1.617617 
+# estimated kurtosis:  7.286244
+</pre>
+
+<p>
+<a href="./img/descdistWoodDeckSF.png">The descdist produces this image</a>. This looks a lot more promising than the previous image, which does not resemble anything comprehensible.
+</p>
+</div>
 </li></ol>
 </div>
-
-<div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 2nd Floor</h4>
-<div class="outline-text-4" id="text-1-3-3">
-</div><ol class="org-ol"><li><a id="sec-1-3-3-1" name="sec-1-3-3-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-3-1">
+<div id="outline-container-sec-2-3-2" class="outline-4">
+<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> 2nd Floor</h4>
+<div class="outline-text-4" id="text-2-3-2">
+</div><ol class="org-ol"><li><a id="sec-2-3-2-1" name="sec-2-3-2-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-2-3-2-1">
 <pre class="example">
 has2ndFlr = dat[dat$X2ndFlrSF != 0,] # has a 2nd floor
 no2ndFlr = dat[dat$X2ndFlrSF == 0,] # doesn't have a 2nd floor
@@ -278,10 +315,10 @@ mean(has2ndFlr$SalePrice) - mean(no2ndFlr$SalePrice) # 22,067
 </li></ol>
 </div>
 
-<div id="outline-container-sec-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Open Porch</h4>
-<div class="outline-text-4" id="text-1-3-4">
-</div><ol class="org-ol"><li><a id="sec-1-3-4-1" name="sec-1-3-4-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-4-1">
+<div id="outline-container-sec-2-3-3" class="outline-4">
+<h4 id="sec-2-3-3"><span class="section-number-4">2.3.3</span> Open Porch</h4>
+<div class="outline-text-4" id="text-2-3-3">
+</div><ol class="org-ol"><li><a id="sec-2-3-3-1" name="sec-2-3-3-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-2-3-3-1">
 <pre class="example">
 hasOpenPorch = dat[dat$OpenPorchSF != 0,] # has an open porch
 noOpenPorch = dat[dat$OpenPorchSF == 0,] # doesn't have an open porch
@@ -293,7 +330,7 @@ mean(hasOpenPorch$SalePrice) - mean(noOpenPorch$SalePrice) # 65930
 </div>
 </li>
 
-<li><a id="sec-1-3-4-2" name="sec-1-3-4-2"></a>Distribution Parameters<br  /><div class="outline-text-5" id="text-1-3-4-2">
+<li><a id="sec-2-3-3-2" name="sec-2-3-3-2"></a>Distribution Parameters<br  /><div class="outline-text-5" id="text-2-3-3-2">
 <p>
 It matches the CDF reasonably well, but the upper half does not follow the QQ plot at all. Possibly bimodal distribution?
 </p>
@@ -325,10 +362,10 @@ fit.gamma
 </li></ol>
 </div>
 
-<div id="outline-container-sec-1-3-5" class="outline-4">
-<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> Street Access</h4>
-<div class="outline-text-4" id="text-1-3-5">
-</div><ol class="org-ol"><li><a id="sec-1-3-5-1" name="sec-1-3-5-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-5-1">
+<div id="outline-container-sec-2-3-4" class="outline-4">
+<h4 id="sec-2-3-4"><span class="section-number-4">2.3.4</span> Street Access</h4>
+<div class="outline-text-4" id="text-2-3-4">
+</div><ol class="org-ol"><li><a id="sec-2-3-4-1" name="sec-2-3-4-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-2-3-4-1">
 <p>
 There are only 6 houses in the entire set that have gravel driveways. All but one were constructed before 1965.
 </p>
@@ -348,7 +385,7 @@ mean(pavedRoad$SalePrice) - mean(gravelRoad$SalePrice) # 50940
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Ahmad Jarara</p>
-<p class="date">Created: 2016-11-23 Wed 21:51</p>
+<p class="date">Created: 2016-11-24 Thu 15:15</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

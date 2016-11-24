@@ -1,24 +1,37 @@
+* Introduction
+What follows is a small compilation of just some exploratory analysis I've done. Let me know if you'd like anything to be published, right now all I'm doing is separating out the data. One thing I'd like to make note of eventually is the correlation between features of the house. It's clear that having a porch or a 2nd floor effects the price positively, but I'm sure there is some correlation between the two. There probably exists some degree of correlation between all the features of the house. It's just a matter of what are the ones that affect pricing the most. I don't really know how to structure the analysis, something I'd welcome feedback on. As for now, I'm just going to get basic info.
+
 * Questions:
 In what ways does the data affect pricing?
 Are there any correlations between the variables themselves?
 Distributions of each variable irrespective of their affiliations
 Outliers?
 ** Slide format
+
+So LaTeX has a presentation mode, which the professor uses. There are a lot of themes, but the default theme is probably the best looking.
+
 Using the Beamer class, pittsburg theme or bust (aka default theme)
 ** Some tooling for the data
-Data frame indexing
 
-Let's say you would like to slice the data we have by quantiles, and contrast.
-** Rooms
-SalePrice is definitely affected by presence of specific rooms.
-So far it might be categorical.
-
-All the code blocks assume the following:
-#+BEGIN_SRC 
+All the code blocks after this section assume the following:
+#+BEGIN_SRC
 dat = read.csv("BHD.csv")
 #+END_SRC
 
-The distribution parameter sections use the fitdistrplus library to find a distribution, and then 
+Data frame indexing. Let's say you want to get only the apartments in Mitchel. It's quite simple to get this:
+#+BEGIN_SRC
+dat[dat$Neighborhood == "Mitchel",]
+#+END_SRC
+
+The last comma is necessary, it is used to get the columns. In fact, you can use this to immediately get the data for a specific neighborhood, but this is a little tedious as you have to refer to the column names by numbers (ie SalePrice is column 1, WoodDeckSF is column 4, etc.)
+
+#+BEGIN_SRC
+mean(dat[dat$Neighborhood == "Mitchel", 1]) # 156,270
+#+END_SRC
+
+** Rooms
+SalePrice is definitely affected by presence of specific features of the house. Not sure whether the influence is categorical.
+
 *** Basement
 
 **** Categorical data
@@ -50,7 +63,7 @@ descdist(hasbasement$BsmtSF)
 
 #+END_SRC
 
-*** WoodDeck
+[[./img/descdistBasementSF.png][The descdist produces this image]].
 **** Categorical data
 #+BEGIN_SRC 
 hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
@@ -62,6 +75,26 @@ mean(hasDeck$SalePrice) - mean(noDeck$SalePrice) # 47,320
 
 #+END_SRC
 
+**** Distribution parameters
+
+
+#+BEGIN_SRC 
+hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
+
+descdist(hasDeck$WoodDeckSF)
+
+# summary statistics
+# ------
+# min:  12   max:  857 
+# median:  171 
+# mean:  196.8484 
+# estimated sd:  112.2997 
+# estimated skewness:  1.617617 
+# estimated kurtosis:  7.286244 
+
+#+END_SRC
+
+[[./img/descdistWoodDeckSF.png][The descdist produces this image]]. This looks a lot more promising than the previous image, which does not resemble anything comprehensible.
 *** 2nd Floor
 **** Categorical data
 #+BEGIN_SRC 
