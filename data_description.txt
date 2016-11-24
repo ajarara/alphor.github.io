@@ -1,0 +1,63 @@
+The aim of this project is to analyze Boston housing data using your MATH534 knowledge.
+The data contains n=1,460 observations collected from Boston area. Each observation contains one response (sale price) 
+and eight predictors. The data is a subset of a larger dataset downloadable at https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data
+In the end of the semester you will be asked to present your results in class. The best report writer(s) may be asked to analyze the full dataset
+and participate the Kaggle competition.
+
+
+Please do the following:
+
+(1) determine which variables significantly affect housing price in Boston; 
+(2) propose a suitable statistical model that describes the relationship between housing price and your selected variables;
+(3) split the data to two parts (one for training, the other for testing) to examine your model;
+(4) othe problems you are interested? try to address them;
+(5) write a detailed presentable report.
+
+The data contains the following variables.
+
+Sale price: sale price 
+
+1stFlrSF: area of the first floor in square feet
+
+2ndFlrSF: area of the second floor in square feet
+
+WoodDeckSF: wood deck area in square feet
+
+OpenPorchSF: Open porch area in square feet
+
+YearBuilt: original construction date
+
+BsmtSF: total square feet of basement area
+
+Neighborhood: physical locations within Ames city limits
+
+       Blmngtn	Bloomington Heights
+       Blueste	Bluestem
+       BrDale	Briardale
+       BrkSide	Brookside
+       ClearCr	Clear Creek
+       CollgCr	College Creek
+       Crawfor	Crawford
+       Edwards	Edwards
+       Gilbert	Gilbert
+       IDOTRR	Iowa DOT and Rail Road
+       MeadowV	Meadow Village
+       Mitchel	Mitchell
+       Names	North Ames
+       NoRidge	Northridge
+       NPkVill	Northpark Villa
+       NridgHt	Northridge Heights
+       NWAmes	Northwest Ames
+       OldTown	Old Town
+       SWISU	South & West of Iowa State University
+       Sawyer	Sawyer
+       SawyerW	Sawyer West
+       Somerst	Somerset
+       StoneBr	Stone Brook
+       Timber	Timberland
+       Veenker	Veenker
+
+Street: type of road access to property
+
+       Grvl	Gravel	
+       Pave	Paved

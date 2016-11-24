@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>draft</title>
+<!-- 2016-11-23 Wed 21:51 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Ahmad Jarara" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">draft</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Questions:</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Slide format</a></li>
+<li><a href="#sec-1-2">1.2. Some tooling for the data</a></li>
+<li><a href="#sec-1-3">1.3. Rooms</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1. Basement</a></li>
+<li><a href="#sec-1-3-2">1.3.2. WoodDeck</a></li>
+<li><a href="#sec-1-3-3">1.3.3. 2nd Floor</a></li>
+<li><a href="#sec-1-3-4">1.3.4. Open Porch</a></li>
+<li><a href="#sec-1-3-5">1.3.5. Street Access</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Questions:</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+In what ways does the data affect pricing?
+Are there any correlations between the variables themselves?
+Distributions of each variable irrespective of their affiliations
+Outliers?
+</p>
+</div>
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Slide format</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Using the Beamer class, pittsburg theme or bust (aka default theme)
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Some tooling for the data</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Data frame indexing
+</p>
+
+<p>
+Let's say you would like to slice the data we have by quantiles, and contrast.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Rooms</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+SalePrice is definitely affected by presence of specific rooms.
+So far it might be categorical.
+</p>
+
+<p>
+All the code blocks assume the following:
+</p>
+<pre class="example">
+dat = read.csv("BHD.csv")
+</pre>
+
+<p>
+The distribution parameter sections use the fitdistrplus library to find a distribution, and then 
+</p>
+</div>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Basement</h4>
+<div class="outline-text-4" id="text-1-3-1">
+</div><ol class="org-ol"><li><a id="sec-1-3-1-1" name="sec-1-3-1-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-1-1">
+<pre class="example">
+hasbasement = dat[dat$BsmtSF != 0,] # has a basement 
+nobasement = dat[dat$BsmtSF == 0,] # doesn't have a basement
+
+nrow(dat) == nrow(hasbasement) + nrow(nobasement) # TRUE
+
+mean(hasbasement$SalePrice) - mean(nobasement$SalePrice) # 22,645
+</pre>
+</div>
+</li>
+
+<li><a id="sec-1-3-1-2" name="sec-1-3-1-2"></a>Distribution parameters<br  /><div class="outline-text-5" id="text-1-3-1-2">
+<p>
+Uh&#x2026; the cullen and Frey graph does not show anything that is coherent. Possibilities include trimming the exteriors.
+</p>
+<pre class="example">
+hasbasement = dat[dat$BsmtSF != 0,] # has a basement
+
+descdist(hasbasement$BsmtSF)
+
+# summary statistics
+# ------
+# min:  2   max:  5644 
+# median:  604 
+# mean:  652.28 
+# estimated sd:  411.9803 
+# estimated skewness:  2.302275 
+# estimated kurtosis:  24.32368
+</pre>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> WoodDeck</h4>
+<div class="outline-text-4" id="text-1-3-2">
+</div><ol class="org-ol"><li><a id="sec-1-3-2-1" name="sec-1-3-2-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-2-1">
+<pre class="example">
+hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
+noDeck = dat[dat$WoodDeckSF == 0,] # doesn't have a wood deck
+
+nrow(dat) == nrow(hasDeck) + nrow(noDeck) # TRUE
+
+mean(hasDeck$SalePrice) - mean(noDeck$SalePrice) # 47,320
+</pre>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 2nd Floor</h4>
+<div class="outline-text-4" id="text-1-3-3">
+</div><ol class="org-ol"><li><a id="sec-1-3-3-1" name="sec-1-3-3-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-3-1">
+<pre class="example">
+has2ndFlr = dat[dat$X2ndFlrSF != 0,] # has a 2nd floor
+no2ndFlr = dat[dat$X2ndFlrSF == 0,] # doesn't have a 2nd floor
+
+nrow(dat) == nrow(has2ndFlr) + nrow(no2ndFlr) # TRUE
+
+mean(has2ndFlr$SalePrice) - mean(no2ndFlr$SalePrice) # 22,067
+</pre>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Open Porch</h4>
+<div class="outline-text-4" id="text-1-3-4">
+</div><ol class="org-ol"><li><a id="sec-1-3-4-1" name="sec-1-3-4-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-4-1">
+<pre class="example">
+hasOpenPorch = dat[dat$OpenPorchSF != 0,] # has an open porch
+noOpenPorch = dat[dat$OpenPorchSF == 0,] # doesn't have an open porch
+
+nrow(dat) == nrow(hasOpenPorch) + nrow(noOpenPorch) # TRUE
+
+mean(hasOpenPorch$SalePrice) - mean(noOpenPorch$SalePrice) # 65930
+</pre>
+</div>
+</li>
+
+<li><a id="sec-1-3-4-2" name="sec-1-3-4-2"></a>Distribution Parameters<br  /><div class="outline-text-5" id="text-1-3-4-2">
+<p>
+It matches the CDF reasonably well, but the upper half does not follow the QQ plot at all. Possibly bimodal distribution?
+</p>
+
+
+<pre class="example">
+hasOpenPorch = dat[dat$OpenPorchSF != 0,] # has an open porch
+
+descdist(dat$OpenPorchSF)
+
+# summary statistics
+# ------
+# min:  4   max:  547 
+# median:  63 
+# mean:  84.73134 
+# estimated sd:  68.89317 
+# estimated skewness:  2.24855 
+# estimated kurtosis:  10.80962 
+
+fit.gamma
+
+# Fitting of the distribution ' gamma ' by maximum likelihood 
+# Parameters:
+#         estimate  Std. Error
+# shape 2.02408873 0.093442109
+# rate  0.02389128 0.001248555
+</pre>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> Street Access</h4>
+<div class="outline-text-4" id="text-1-3-5">
+</div><ol class="org-ol"><li><a id="sec-1-3-5-1" name="sec-1-3-5-1"></a>Categorical data<br  /><div class="outline-text-5" id="text-1-3-5-1">
+<p>
+There are only 6 houses in the entire set that have gravel driveways. All but one were constructed before 1965.
+</p>
+<pre class="example">
+pavedRoad = dat[dat$Street == "Pave",] # has a pavement driveway
+gravelRoad = dat[dat$Street == "Grvl",] # has a gravel driveway
+
+nrow(dat) == nrow(pavedRoad) + nrow(gravelRoad) # TRUE
+
+mean(pavedRoad$SalePrice) - mean(gravelRoad$SalePrice) # 50940
+</pre>
+</div>
+</li></ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ahmad Jarara</p>
+<p class="date">Created: 2016-11-23 Wed 21:51</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

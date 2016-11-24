@@ -1,0 +1,129 @@
+* Questions:
+In what ways does the data affect pricing?
+Are there any correlations between the variables themselves?
+Distributions of each variable irrespective of their affiliations
+Outliers?
+** Slide format
+Using the Beamer class, pittsburg theme or bust (aka default theme)
+** Some tooling for the data
+Data frame indexing
+
+Let's say you would like to slice the data we have by quantiles, and contrast.
+** Rooms
+SalePrice is definitely affected by presence of specific rooms.
+So far it might be categorical.
+
+All the code blocks assume the following:
+#+BEGIN_SRC 
+dat = read.csv("BHD.csv")
+#+END_SRC
+
+The distribution parameter sections use the fitdistrplus library to find a distribution, and then 
+*** Basement
+
+**** Categorical data
+#+BEGIN_SRC 
+hasbasement = dat[dat$BsmtSF != 0,] # has a basement 
+nobasement = dat[dat$BsmtSF == 0,] # doesn't have a basement
+
+nrow(dat) == nrow(hasbasement) + nrow(nobasement) # TRUE
+
+mean(hasbasement$SalePrice) - mean(nobasement$SalePrice) # 22,645
+
+#+END_SRC
+
+**** Distribution parameters
+Uh... the cullen and Frey graph does not show anything that is coherent. Possibilities include trimming the exteriors.
+#+BEGIN_SRC 
+hasbasement = dat[dat$BsmtSF != 0,] # has a basement
+
+descdist(hasbasement$BsmtSF)
+
+# summary statistics
+# ------
+# min:  2   max:  5644 
+# median:  604 
+# mean:  652.28 
+# estimated sd:  411.9803 
+# estimated skewness:  2.302275 
+# estimated kurtosis:  24.32368 
+
+#+END_SRC
+
+*** WoodDeck
+**** Categorical data
+#+BEGIN_SRC 
+hasDeck = dat[dat$WoodDeckSF != 0,] # has a wood deck
+noDeck = dat[dat$WoodDeckSF == 0,] # doesn't have a wood deck
+
+nrow(dat) == nrow(hasDeck) + nrow(noDeck) # TRUE
+
+mean(hasDeck$SalePrice) - mean(noDeck$SalePrice) # 47,320
+
+#+END_SRC
+
+*** 2nd Floor
+**** Categorical data
+#+BEGIN_SRC 
+has2ndFlr = dat[dat$X2ndFlrSF != 0,] # has a 2nd floor
+no2ndFlr = dat[dat$X2ndFlrSF == 0,] # doesn't have a 2nd floor
+
+nrow(dat) == nrow(has2ndFlr) + nrow(no2ndFlr) # TRUE
+
+mean(has2ndFlr$SalePrice) - mean(no2ndFlr$SalePrice) # 22,067
+
+#+END_SRC
+
+*** Open Porch
+**** Categorical data
+#+BEGIN_SRC 
+hasOpenPorch = dat[dat$OpenPorchSF != 0,] # has an open porch
+noOpenPorch = dat[dat$OpenPorchSF == 0,] # doesn't have an open porch
+
+nrow(dat) == nrow(hasOpenPorch) + nrow(noOpenPorch) # TRUE
+
+mean(hasOpenPorch$SalePrice) - mean(noOpenPorch$SalePrice) # 65930
+
+#+END_SRC
+
+**** Distribution Parameters
+It matches the CDF reasonably well, but the upper half does not follow the QQ plot at all. Possibly bimodal distribution?
+
+
+#+BEGIN_SRC 
+hasOpenPorch = dat[dat$OpenPorchSF != 0,] # has an open porch
+
+descdist(dat$OpenPorchSF)
+
+# summary statistics
+# ------
+# min:  4   max:  547 
+# median:  63 
+# mean:  84.73134 
+# estimated sd:  68.89317 
+# estimated skewness:  2.24855 
+# estimated kurtosis:  10.80962 
+
+fit.gamma
+
+# Fitting of the distribution ' gamma ' by maximum likelihood 
+# Parameters:
+#         estimate  Std. Error
+# shape 2.02408873 0.093442109
+# rate  0.02389128 0.001248555
+
+
+#+END_SRC
+
+*** Street Access
+**** Categorical data
+There are only 6 houses in the entire set that have gravel driveways. All but one were constructed before 1965.
+#+BEGIN_SRC 
+pavedRoad = dat[dat$Street == "Pave",] # has a pavement driveway
+gravelRoad = dat[dat$Street == "Grvl",] # has a gravel driveway
+
+nrow(dat) == nrow(pavedRoad) + nrow(gravelRoad) # TRUE
+
+mean(pavedRoad$SalePrice) - mean(gravelRoad$SalePrice) # 50940
+
+#+END_SRC
