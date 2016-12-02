@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>index</title>
-<!-- 2016-12-02 Fri 01:32 -->
+<!-- 2016-12-02 Fri 03:18 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Ahmad Jarara" />
@@ -171,12 +171,13 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#sec-3">3. Analysis</a>
 <ul>
-<li><a href="#sec-3-1">3.1. Distribution of neighborhoods</a>
+<li><a href="#sec-3-1">3.1. Incredibly low sample size -&gt; bootstrapping</a></li>
+<li><a href="#sec-3-2">3.2. Distribution of neighborhoods</a>
 <ul>
-<li><a href="#sec-3-1-1">3.1.1. Generated random indices for each of the subsets</a></li>
+<li><a href="#sec-3-2-1">3.2.1. Generated random indices for each of the subsets</a></li>
 </ul>
 </li>
-<li><a href="#sec-3-2">3.2. OpenPorchSF</a></li>
+<li><a href="#sec-3-3">3.3. OpenPorchSF</a></li>
 </ul>
 </li>
 </ul>
@@ -534,8 +535,37 @@ mean(pavedRoad$SalePrice) - mean(gravelRoad$SalePrice) # 50940
 <h2 id="sec-3"><span class="section-number-2">3</span> Analysis</h2>
 <div class="outline-text-2" id="text-3">
 </div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Distribution of neighborhoods</h3>
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Incredibly low sample size -&gt; bootstrapping</h3>
 <div class="outline-text-3" id="text-3-1">
+<p>
+A good idea to mitigate this is to bootstrap. I didn't do it in the below analysis, but there is a library for it (conveniently labelled boot). Usage is simple:
+</p>
+<pre class="example">
+# define a statistic you'd like to test. It will get passed a formula, the dataset, and indices (generated from the bootstrap)
+ressq &lt;- function (formula, data, indices) {
+    newdat = data[indices,]
+    fit = lm(formula, data=newdat)
+    return(summary(fit)$r.square)
+}
+
+# bootstrapping with 1000 replications
+res = boot(data=dat, statistic=ressq, R=1000, formula=SalePrice~OpenPorchSF+X1stFlrSF)
+
+# the results look suspiciously like the normal distribution (because of the CLT?)
+</pre>
+
+<p>
+Note: boot does not give access to the generated samples (the memory requirements would be insane if it saved each trial). It's essentially a glorified map.
+</p>
+
+<p>
+Code inspired from: <a href="http://www.statmethods.net/advstats/bootstrapping.html">http://www.statmethods.net/advstats/bootstrapping.html</a>
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Distribution of neighborhoods</h3>
+<div class="outline-text-3" id="text-3-2">
 <pre class="example">
 as.data.frame(table(dat$Neighborhood)) # gets count of neighborhoods
 
@@ -758,9 +788,9 @@ I choose the four neighborhoods listed out here because it is quite tedious to a
 It has been mentioned that we sample from our dataset for training and for testing. Since we have such a limited sample size (which is clearly a problem, as shown by the table above), I took the liberty of using 75% of the data to establish a training set, and the other 25% as testing. In order to provide consistent results, I've done the following:
 </p>
 </div>
-<div id="outline-container-sec-3-1-1" class="outline-4">
-<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> Generated random indices for each of the subsets</h4>
-<div class="outline-text-4" id="text-3-1-1">
+<div id="outline-container-sec-3-2-1" class="outline-4">
+<h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> Generated random indices for each of the subsets</h4>
+<div class="outline-text-4" id="text-3-2-1">
 <p>
 The point is to have training data consistent across sessions between all of us.
 </p>
@@ -773,14 +803,14 @@ This is simple, all I did was sample 0.75 * $index from 1:$index of each partiti
 
 <pre class="src src-R">  <span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">full dataset consists of 1460 entries</span>
   <span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">sample(1:1460, 1460, replace=F)</span>
-  fulldatIndices = c(221,1001,419,1368,580,154,877,233,1367,266,1263,152,1122,122,,831,205,685,1242,76,358,731,518,629,962,874,440,732,234,,555,142,474,1062,444,1423,302,155,567,319,662,173,695,1439,,180,1066,708,177,1169,1304,1252,220,1360,1161,1436,197,282,1065,1325,366,1415,745,571,13,804,1390,1320,393,722,239,505,457,,546,1432,913,828,756,1458,718,1377,1201,175,498,1225,1184,162,,374,703,549,1336,647,777,891,1249,314,761,445,378,1097,965,,81,448,468,124,1070,617,349,1123,1355,1040,351,272,1300,861,,390,304,1234,2,859,737,487,631,1158,1226,417,561,20,663,,692,55,494,1133,149,824,1291,195,1438,928,587,1371,1276,344,,190,993,740,217,1297,557,742,961,362,278,1052,1273,391,959,1443,80,531,163,296,226,1,301,1008,1386,660,876,1038,248,,818,1050,109,661,335,150,442,610,1205,927,543,1089,988,757,,53,279,1447,996,657,499,1009,24,405,295,1092,579,47,902,,977,287,1452,970,1280,451,1238,597,414,944,1172,1382,969,843,1022,698,164,840,290,899,1080,836,837,1331,397,872,485,428,,168,403,360,1053,1114,509,131,102,19,179,1128,10,297,285,,550,1139,267,395,426,882,311,916,1071,789,577,766,729,776,1335,614,1146,1244,554,769,247,537,644,253,622,1264,182,528,,862,504,1170,848,392,104,1243,90,355,1060,1449,185,1253,1192,1177,852,416,540,201,1079,565,978,939,342,821,472,450,324,,787,1309,410,633,243,1034,370,858,1366,1119,1215,975,1339,601,,425,1190,733,954,471,1250,1173,667,495,373,348,357,265,204,,736,138,724,1075,1375,1278,790,224,94,367,1068,851,1235,1414,1419,576,838,914,1303,251,1171,484,839,749,434,345,219,320,1256,111,935,359,339,1376,1269,544,1024,688,229,802,1191,1231,1446,4,77,241,870,464,1255,1056,169,595,793,551,1106,1396,,514,379,734,369,696,1389,1268,1384,569,1224,623,68,1435,167,,883,1147,1362,1202,1310,1063,1287,1398,207,864,386,306,743,1045,,135,589,624,1032,1241,602,974,1308,627,931,1392,1430,1117,1240,,230,1103,73,966,66,1026,72,400,423,1196,262,873,383,1059,,346,548,57,159,933,1457,538,1198,329,605,697,435,1064,87,1074,910,1091,1150,404,700,1456,829,64,83,470,1454,1016,456,,666,1153,292,333,223,513,1143,1330,1422,1317,814,326,108,529,,808,779,628,886,1296,1058,680,1294,106,682,1014,261,613,431,,315,365,951,502,430,516,350,18,203,143,1341,506,986,1418,,465,760,1151,547,813,62,52,313,526,1220,679,96,240,592,,82,717,447,1193,305,798,1448,578,286,1204,812,879,51,819,1433,1316,1218,758,1283,1076,242,833,30,340,1111,126,815,421,,275,984,136,308,1112,116,1167,690,259,176,683,1087,214,1378,,907,983,994,45,330,553,919,1337,1351,1078,478,1099,594,1275,,739,1453,1212,783,817,1343,900,1100,911,849,354,482,385,1129,,825,1324,1221,67,953,99,93,107,947,510,9,63,832,895,,768,1426,1421,989,1233,943,704,945,1350,1156,963,341,1245,35,,380,32,174,237,1261,654,309,1444,1197,1003,34,932,1401,937,,946,1210,1424,1000,1301,493,1149,1285,904,114,727,1229,860,905,,934,1098,263,1440,620,1134,884,938,299,971,388,973,748,590,,235,1437,225,635,59,684,134,422,572,1104,429,686,112,466,1413,1281,805,967,276,721,1399,1155,591,1096,270,765,607,1237,,250,1344,198,694,1329,1340,1131,521,213,490,481,1200,612,1148,,775,990,145,343,211,1082,1188,1054,1232,878,258,293,338,788,,277,508,799,949,1175,28,1037,909,1262,782,133,678,361,364,1460,249,11,1404,728,645,192,127,58,936,31,202,1230,715,,593,271,673,424,792,294,86,245,640,869,822,582,1145,574,1127,480,898,1203,1356,139,110,751,1388,1429,1284,1025,558,854,,773,1163,800,889,394,455,1214,950,527,1174,337,1288,1017,650,,401,1346,1004,228,352,130,875,674,871,1292,1019,125,1219,1322,1290,1282,1006,1348,1028,634,289,517,1374,980,637,1227,268,890,,37,791,1216,16,377,866,500,1013,8,274,38,356,801,1168,1126,1012,281,999,867,519,387,1272,1357,598,844,795,492,1387,,559,332,1105,1030,307,1031,1323,1239,1266,997,216,892,74,71,1061,632,664,1311,1027,929,1095,1055,512,54,524,1110,868,926,1407,1411,545,714,1157,771,930,170,1142,193,520,1393,539,906,1069,1279,1260,1093,46,1318,1023,1299,699,222,894,611,1361,920,,254,300,146,725,128,942,1332,1302,409,596,1162,439,200,454,,60,199,952,1051,1408,1165,1195,998,322,1352,1209,132,609,855,,689,1199,396,312,98,564,1185,6,1359,652,1186,1286,1416,1083,,573,741,26,1044,1379,325,323,328,1036,105,232,880,1410,972,,255,1207,670,857,581,371,158,1029,762,92,1113,719,1381,1081,,88,1189,992,496,462,1455,691,372,12,1208,260,1002,968,541,,655,955,1154,618,1166,184,1397,1412,639,841,1039,402,827,1107,,676,1342,1015,705,515,100,165,21,331,511,1417,1254,48,438,,912,244,1005,1365,412,811,1431,91,1345,238,79,1067,1041,17,,583,588,1257,1380,256,1088,1289,1270,1020,413,157,1338,1118,957,1327,1121,408,716,706,1217,638,218,280,1152,881,461,915,987,1086,288,171,523,759,1178,532,1307,1010,803,625,616,209,363,,707,399,441,735,1405,1347,608,236,269,888,347,389,1251,1395,1328,1428,1033,1183,14,160,669,151,1383,1247,1130,982,575,44,,264,747,630,820,15,1427,336,1434,772,649,115,672,1057,560,,433,420,49,183,172,653,284,738,181,1125,806,918,137,778,,568,636,368,50,1136,56,411,1101,1181,659,522,208,646,231,,542,334,797,7,693,1213,1182,459,1293,118,1394,1085,1035,1180,,604,1048,1277,166,1354,317,458,418,1385,850,807,273,1358,1137,,599,816,671,89,140,1141,1400,641,1259,784,1406,1094,491,1164,,479,318,1211,103,621,940,113,283,1403,188,353,398,148,903,,452,85,1109,449,1108,415,501,755,376,227,1265,407,41,1298,1258,941,291,921,1313,33,43,473,310,713,194,981,1187,42,,964,1160,36,427,443,770,823,856,483,382,469,897,810,1222,,406,763,584,826,923,847,901,619,1115,1140,186,948,1442,384,1084,121,1306,120,1445,1011,925,147,1369,1315,153,381,161,1116,,726,533,668,642,3,846,1334,1441,566,917,750,780,1228,1271,,552,1047,896,95,1373,1132,1420,1314,908,1138,893,752,774,178,,585,712,702,101,711,22,534,84,710,991,1353,536,835,432,,436,1049,863,958,69,754,865,327,65,129,730,525,196,489,1391,1206,1450,887,486,853,1274,252,1370,476,556,257,1124,119,,475,796,648,141,497,600,1073,656,189,1321,191,794,1072,446,,453,1333,658,27,40,1305,1248,1459,615,979,746,1349,477,767,,785,1364,834,507,1135,845,677,1046,723,75,375,1326,1042,1077,1223,488,1246,687,530,1295,1319,144,830,70,212,781,23,535,,643,922,606,651,1120,1451,117,1312,298,1144,1159,995,1043,210,1007,1363,603,61,1372,123,460,786,206,764,956,924,720,321,1090,665,97,39,78,303,675,809,1194,1179,187,467,1402,709,,437,1236,156,885,842,1425,5,562,316,29,753,985,1021,1018,,215,570,586,701,1102,960,503,1176,25,246,1409,626,463,1267,,563,976,744,681)
+  fulldatIndices = c(221,1001,419,1368,580,154,877,233,1367,266,1263,152,1122,122,831,205,685,1242,76,358,731,518,629,962,874,440,732,234,555,142,474,1062,444,1423,302,155,567,319,662,173,695,1439,180,1066,708,177,1169,1304,1252,220,1360,1161,1436,197,282,1065,1325,366,1415,745,571,13,804,1390,1320,393,722,239,505,457,546,1432,913,828,756,1458,718,1377,1201,175,498,1225,1184,162,374,703,549,1336,647,777,891,1249,314,761,445,378,1097,965,81,448,468,124,1070,617,349,1123,1355,1040,351,272,1300,861,390,304,1234,2,859,737,487,631,1158,1226,417,561,20,663,692,55,494,1133,149,824,1291,195,1438,928,587,1371,1276,344,190,993,740,217,1297,557,742,961,362,278,1052,1273,391,959,1443,80,531,163,296,226,1,301,1008,1386,660,876,1038,248,818,1050,109,661,335,150,442,610,1205,927,543,1089,988,757,53,279,1447,996,657,499,1009,24,405,295,1092,579,47,902,977,287,1452,970,1280,451,1238,597,414,944,1172,1382,969,843,1022,698,164,840,290,899,1080,836,837,1331,397,872,485,428,168,403,360,1053,1114,509,131,102,19,179,1128,10,297,285,550,1139,267,395,426,882,311,916,1071,789,577,766,729,776,1335,614,1146,1244,554,769,247,537,644,253,622,1264,182,528,862,504,1170,848,392,104,1243,90,355,1060,1449,185,1253,1192,1177,852,416,540,201,1079,565,978,939,342,821,472,450,324,787,1309,410,633,243,1034,370,858,1366,1119,1215,975,1339,601,425,1190,733,954,471,1250,1173,667,495,373,348,357,265,204,736,138,724,1075,1375,1278,790,224,94,367,1068,851,1235,1414,1419,576,838,914,1303,251,1171,484,839,749,434,345,219,320,1256,111,935,359,339,1376,1269,544,1024,688,229,802,1191,1231,1446,4,77,241,870,464,1255,1056,169,595,793,551,1106,1396,514,379,734,369,696,1389,1268,1384,569,1224,623,68,1435,167,883,1147,1362,1202,1310,1063,1287,1398,207,864,386,306,743,1045,135,589,624,1032,1241,602,974,1308,627,931,1392,1430,1117,1240,230,1103,73,966,66,1026,72,400,423,1196,262,873,383,1059,346,548,57,159,933,1457,538,1198,329,605,697,435,1064,87,1074,910,1091,1150,404,700,1456,829,64,83,470,1454,1016,456,666,1153,292,333,223,513,1143,1330,1422,1317,814,326,108,529,808,779,628,886,1296,1058,680,1294,106,682,1014,261,613,431,315,365,951,502,430,516,350,18,203,143,1341,506,986,1418,465,760,1151,547,813,62,52,313,526,1220,679,96,240,592,82,717,447,1193,305,798,1448,578,286,1204,812,879,51,819,1433,1316,1218,758,1283,1076,242,833,30,340,1111,126,815,421,275,984,136,308,1112,116,1167,690,259,176,683,1087,214,1378,907,983,994,45,330,553,919,1337,1351,1078,478,1099,594,1275,739,1453,1212,783,817,1343,900,1100,911,849,354,482,385,1129,825,1324,1221,67,953,99,93,107,947,510,9,63,832,895,768,1426,1421,989,1233,943,704,945,1350,1156,963,341,1245,35,380,32,174,237,1261,654,309,1444,1197,1003,34,932,1401,937,946,1210,1424,1000,1301,493,1149,1285,904,114,727,1229,860,905,934,1098,263,1440,620,1134,884,938,299,971,388,973,748,590,235,1437,225,635,59,684,134,422,572,1104,429,686,112,466,1413,1281,805,967,276,721,1399,1155,591,1096,270,765,607,1237,250,1344,198,694,1329,1340,1131,521,213,490,481,1200,612,1148,775,990,145,343,211,1082,1188,1054,1232,878,258,293,338,788,277,508,799,949,1175,28,1037,909,1262,782,133,678,361,364,1460,249,11,1404,728,645,192,127,58,936,31,202,1230,715,593,271,673,424,792,294,86,245,640,869,822,582,1145,574,1127,480,898,1203,1356,139,110,751,1388,1429,1284,1025,558,854,773,1163,800,889,394,455,1214,950,527,1174,337,1288,1017,650,401,1346,1004,228,352,130,875,674,871,1292,1019,125,1219,1322,1290,1282,1006,1348,1028,634,289,517,1374,980,637,1227,268,890,37,791,1216,16,377,866,500,1013,8,274,38,356,801,1168,1126,1012,281,999,867,519,387,1272,1357,598,844,795,492,1387,559,332,1105,1030,307,1031,1323,1239,1266,997,216,892,74,71,1061,632,664,1311,1027,929,1095,1055,512,54,524,1110,868,926,1407,1411,545,714,1157,771,930,170,1142,193,520,1393,539,906,1069,1279,1260,1093,46,1318,1023,1299,699,222,894,611,1361,920,254,300,146,725,128,942,1332,1302,409,596,1162,439,200,454,60,199,952,1051,1408,1165,1195,998,322,1352,1209,132,609,855,689,1199,396,312,98,564,1185,6,1359,652,1186,1286,1416,1083,573,741,26,1044,1379,325,323,328,1036,105,232,880,1410,972,255,1207,670,857,581,371,158,1029,762,92,1113,719,1381,1081,88,1189,992,496,462,1455,691,372,12,1208,260,1002,968,541,655,955,1154,618,1166,184,1397,1412,639,841,1039,402,827,1107,676,1342,1015,705,515,100,165,21,331,511,1417,1254,48,438,912,244,1005,1365,412,811,1431,91,1345,238,79,1067,1041,17,583,588,1257,1380,256,1088,1289,1270,1020,413,157,1338,1118,957,1327,1121,408,716,706,1217,638,218,280,1152,881,461,915,987,1086,288,171,523,759,1178,532,1307,1010,803,625,616,209,363,707,399,441,735,1405,1347,608,236,269,888,347,389,1251,1395,1328,1428,1033,1183,14,160,669,151,1383,1247,1130,982,575,44,264,747,630,820,15,1427,336,1434,772,649,115,672,1057,560,433,420,49,183,172,653,284,738,181,1125,806,918,137,778,568,636,368,50,1136,56,411,1101,1181,659,522,208,646,231,542,334,797,7,693,1213,1182,459,1293,118,1394,1085,1035,1180,604,1048,1277,166,1354,317,458,418,1385,850,807,273,1358,1137,599,816,671,89,140,1141,1400,641,1259,784,1406,1094,491,1164,479,318,1211,103,621,940,113,283,1403,188,353,398,148,903,452,85,1109,449,1108,415,501,755,376,227,1265,407,41,1298,1258,941,291,921,1313,33,43,473,310,713,194,981,1187,42,964,1160,36,427,443,770,823,856,483,382,469,897,810,1222,406,763,584,826,923,847,901,619,1115,1140,186,948,1442,384,1084,121,1306,120,1445,1011,925,147,1369,1315,153,381,161,1116,726,533,668,642,3,846,1334,1441,566,917,750,780,1228,1271,552,1047,896,95,1373,1132,1420,1314,908,1138,893,752,774,178,585,712,702,101,711,22,534,84,710,991,1353,536,835,432,436,1049,863,958,69,754,865,327,65,129,730,525,196,489,1391,1206,1450,887,486,853,1274,252,1370,476,556,257,1124,119,475,796,648,141,497,600,1073,656,189,1321,191,794,1072,446,453,1333,658,27,40,1305,1248,1459,615,979,746,1349,477,767,785,1364,834,507,1135,845,677,1046,723,75,375,1326,1042,1077,1223,488,1246,687,530,1295,1319,144,830,70,212,781,23,535,643,922,606,651,1120,1451,117,1312,298,1144,1159,995,1043,210,1007,1363,603,61,1372,123,460,786,206,764,956,924,720,321,1090,665,97,39,78,303,675,809,1194,1179,187,467,1402,709,437,1236,156,885,842,1425,5,562,316,29,753,985,1021,1018,215,570,586,701,1102,960,503,1176,25,246,1409,626,463,1267,563,976,744,681)
 
 
 <span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">now trainingdatIndices are the first 1460*0.75 = 1095 of fulldatIndices.</span>
-trainingdatIndices = fulldatIndices[1:1095]
+trainingdat = dat[fulldatIndices[1:1095],]
 
 <span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">and testingdatIndices are the others!</span>
-testingdatIndices = fulldatIndices[1096:1460]
+testingdat= dat[fulldatIndices[1096:1460],]
 </pre>
 </div>
 
@@ -790,19 +820,19 @@ BUT! The problem arrives when we try to do this same method for our partitioned 
 </p>
 
 <p>
-Anyway, here it is the rest of the indices for the four partitions:
+Anyway, here is the rest of the indices for the four partitions:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-R"><span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullNAmesIndices = sample(1:225, 225, replace=F)</span>
-<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullNrigHtIndices = sample(1:77, 77, replace=F)</span>
-<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullMitchelIndices = sample(1:49, 49, replace=F)</span>
-<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullStoneBrIndices = sample(1:25, 25, replace=F)</span>
+<pre class="src src-R"><span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullNAmesIndices = sample(1:225, 225, replace=F) # 75% 169</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullNrigHtIndices = sample(1:77, 77, replace=F) # 75% 58</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullMitchelIndices = sample(1:49, 49, replace=F) # 75% 35</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">fullStoneBrIndices = sample(1:25, 25, replace=F) # 75% 18 ish</span>
 
 fullNAmesIndices =
 c(213,23,175,179,28,96,130,95,113,104,94,156,141,76,212,116,54,18,127,14,194,149,51,126,159,15,106,136,52,176,87,66,25,101,88,89,62,65,162,143,58,209,99,206,98,78,82,146,160,172,31,84,38,85,45,208,21,102,16,198,97,167,77,133,191,60,171,154,2,100,32,33,4,109,114,35,112,39,165,161,148,29,152,188,7,142,108,197,69,36,20,105,202,203,118,223,46,79,174,47,220,168,42,3,200,205,177,72,8,83,187,224,40,219,41,196,173,199,155,107,86,71,145,110,210,129,182,103,211,189,68,147,134,183,140,22,222,59,44,144,158,80,57,53,11,56,13,153,81,186,120,216,185,192,169,67,55,164,163,217,201,180,91,193,74,139,195,128,151,157,137,166,6,190,93,43,92,34,138,215,50,10,37,17,64,170,30,26,111,73,204,63,90,178,135,132,225,27,115,75,9,214,24,122,218,119,150,184,123,1,131,12,19,5,181,121,70,61,117,49,48,124,125,207,221)
 
-fullNrigHtIndices = 
+fullNridgHtIndices = 
 c(46,73,4,34,68,53,77,16,75,52,41,1,72,44,29,67,8,36,32,6,60,35,19,65,20,62,50,7,38,45,27,33,37,23,11,40,5,76,55,13,43,71,63,48,25,26,18,51,58,49,69,54,22,70,57,59,15,66,74,28,24,21,2,56,64,10,42,61,3,39,9,30,31,12,47,17,14)
 
 
@@ -813,18 +843,182 @@ fullStoneBrIndices =
 c(25,12,2,15,21,22,6,8,23,4,9,13,14,7,1,18,16,19,11,5,24,20,10,17,3)
 </pre>
 </div>
-</div>
-</div>
-</div>
 
 
-
-
-<div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> OpenPorchSF</h3>
-<div class="outline-text-3" id="text-3-2">
 <p>
-We've noted that mean shifts quite drastically when we test for inclusion of a porch. The aim of this section is to test for cor
+Now we get our testing and training data from these samples, filtering (using our  and applying the indices we've generated.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R">onlyNAmes = dat[dat$Neighborhood == <span style="color: #E6DB74;">"NAmes"</span>,]
+testingNAmes = onlyNAmes[fullNAmesIndices[1:169],]
+trainingNAmes = onlyNAmes[fullNAmesIndices[170:225],]
+
+onlyNrigdHt = dat[dat$Neighborhood == <span style="color: #E6DB74;">"NridgHt"</span>,]
+testingNridgHt = onlyNrigHt[fullNridgHtIndices[1:58],]
+trainingNridgHt = onlyNrigHt[fullNridgHtIndices[59:77],]
+
+onlyMitchel = dat[dat$Neighborhood == <span style="color: #E6DB74;">"Mitchel"</span>,]
+testingMitchel = onlyMitchel[fullMitchelIndices[1:35],]
+trainingMitchel = onlyMitchel[fullMitchelIndices[36:46],]
+
+onlyStoneBr = dat[dat$Neighborhood == <span style="color: #E6DB74;">"StoneBr"</span>,]
+testingStoneBr = onlyStoneBr[fullStoneBrIndices[1:18],]
+trainingStoneBr = onlyStoneBr[fullStoneBrIndices[19:25],]
+</pre>
+</div>
+
+
+<p>
+Phew. Now that all that work is done, it's easy to just source all of these samples:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #AE81FF;">source</span>(<span style="color: #E6DB74;">"init.R"</span>)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> OpenPorchSF</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+We've noted that mean shifts quite drastically when we test for inclusion of a porch. The aim of this section is to test for correlation between this and another feature that had a significant effect on average price, WoodDeckSF.
+</p>
+
+<p>
+(Initially I looked at just the presence. Here I am comparing numerical values)
+</p>
+
+<p>
+First the plot:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">plot(testingNAmes$OpenPorchSF, testingNAmes$WoodDeckSF)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="./img/trainingNAmesPorchDeck.png" alt="trainingNAmesPorchDeck.png" />
+</p>
+</div>
+
+<p>
+Nothing is immediately apparent. Let's fall back to tests.
+</p>
+
+<p>
+We'll just be using spearman's Rho, and the testing data.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R">cor.test(trainingNAmes$OpenPorchSF, trainingNAmes$WoodDeckSF, method=<span style="color: #E6DB74;">"kendall"</span>)
+
+<span style="color: #d2691e;">#       </span><span style="color: #d2691e; background-color: #272822;">Kendall's rank correlation tau</span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">data:  trainingNAmes$OpenPorchSF and trainingNAmes$WoodDeckSF</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">z = 0.72579, p-value = 0.468</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">alternative hypothesis: true tau is not equal to 0</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">sample estimates:</span>
+<span style="color: #d2691e;">#        </span><span style="color: #d2691e; background-color: #272822;">tau </span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">0.08531233</span>
+</pre>
+</div>
+
+<p>
+Hmm no correlation. Let's try filtering out all the houses that don't have porches.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">cor.test(trainingNAmes[trainingNAmes$OpenPorchSF != 0,]$OpenPorchSF, trainingNAmes[trainingNAmes$OpenPorchSF != 0,]$WoodDeckSF, method=<span style="color: #E6DB74;">"spearman"</span>)
+
+
+<span style="color: #d2691e;">#       </span><span style="color: #d2691e; background-color: #272822;">Spearman's rank correlation rho</span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">data:  trainingNAmes[trainingNAmes$OpenPorchSF != 0, ]$OpenPorchSF and trainingNAmes[trainingNAmes$OpenPorchSF != 0, ]$WoodDeckSF</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">S = 1485.8, p-value = 0.08969</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">alternative hypothesis: true rho is not equal to 0</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">sample estimates:</span>
+<span style="color: #d2691e;">#       </span><span style="color: #d2691e; background-color: #272822;">rho </span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">0.3539844 </span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">Warning message:</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">In cor.test.default(trainingNAmes[trainingNAmes$OpenPorchSF != 0,  :</span>
+<span style="color: #d2691e;">#   </span><span style="color: #d2691e; background-color: #272822;">Cannot compute exact p-value with ties</span>
+</pre>
+</div>
+
+<p>
+I'm not sure what the warning message means. But there are only 8 (!) elements in these datasets, which probably means a tie, and also probably means that our close to 0.05 p-value is not reliable.
+</p>
+
+<p>
+It seems comparing within the neighborhood is too restrictive. Let's try throughout Boston:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">plot(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="./img/trainingdatPorchDeck.png" alt="trainingdatPorchDeck.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-R">cor.test(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF, method=<span style="color: #E6DB74;">"spearman"</span>)
+
+<span style="color: #d2691e;">#       </span><span style="color: #d2691e; background-color: #272822;">Spearman's rank correlation rho</span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">data:  trainingdat$OpenPorchSF and trainingdat$WoodDeckSF</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">S = 199780000, p-value = 0.003951</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">alternative hypothesis: true rho is not equal to 0</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">sample estimates:</span>
+<span style="color: #d2691e;">#        </span><span style="color: #d2691e; background-color: #272822;">rho </span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">0.08703042 </span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">Warning message:</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">In cor.test.default(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF,  :</span>
+<span style="color: #d2691e;">#   </span><span style="color: #d2691e; background-color: #272822;">Cannot compute exact p-value with ties</span>
+</pre>
+</div>
+
+<p>
+Ooh, exciting! However that pesky error message is still there. We can try using kendall's test (which is another rank correlation, and thus does not depend on normality and is robust to outliers:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">&gt; cor.test(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF, method=<span style="color: #E6DB74;">"kendall"</span>)
+
+<span style="color: #d2691e;">#       </span><span style="color: #d2691e; background-color: #272822;">Kendall's rank correlation tau</span>
+
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">data:  trainingdat$OpenPorchSF and trainingdat$WoodDeckSF</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">z = 2.958, p-value = 0.003097</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">alternative hypothesis: true tau is not equal to 0</span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">sample estimates:</span>
+<span style="color: #d2691e;">#        </span><span style="color: #d2691e; background-color: #272822;">tau </span>
+<span style="color: #d2691e;"># </span><span style="color: #d2691e; background-color: #272822;">0.06960081</span>
+</pre>
+</div>
+
+<p>
+Since the p-value is &lt;0.05 and our results are yes/no, we can conclude that there indeed is a correlation between the sizes of porches and wood decks. A possible next step is finding a glm model to find out the extent of this correlation (is tau a good indicator?). The reason I think this is important is that these two were the biggest contributors to average price increases, so the fact that they are comorbid implies that their effect is diminished.
+</p>
+
+
+<p>
+A possible next step is to perform a complete analysis on the correlations between each aspect of the house. This will be a little time consuming, as there are 6! of these, 720 tests (it can be automated, of course, we have computers).
 </p>
 </div>
 </div>
@@ -832,7 +1026,7 @@ We've noted that mean shifts quite drastically when we test for inclusion of a p
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Ahmad Jarara</p>
-<p class="date">Created: 2016-12-02 Fri 01:32</p>
+<p class="date">Created: 2016-12-02 Fri 03:18</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

@@ -353,7 +353,7 @@ This is simple, all I did was sample 0.75 * $index from 1:$index of each partiti
 This way we ensure that there is no collision between these two.
 BUT! The problem arrives when we try to do this same method for our partitioned data. There is bound to be some mixing of training data that is testing data in the full sample. I don't quite know how to solve this problem, or frankly, if it's a problem at all (as we are training in diffferent contexts).
 
-Anyway, here it is the rest of the indices for the four partitions:
+Anyway, here is the rest of the indices for the four partitions:
 #+BEGIN_SRC R :tangle init.R
   # fullNAmesIndices = sample(1:225, 225, replace=F) # 75% 169
   # fullNrigHtIndices = sample(1:77, 77, replace=F) # 75% 58
@@ -406,3 +406,95 @@ We've noted that mean shifts quite drastically when we test for inclusion of a p
 
 (Initially I looked at just the presence. Here I am comparing numerical values)
 
+First the plot:
+
+#+BEGIN_SRC R
+plot(testingNAmes$OpenPorchSF, testingNAmes$WoodDeckSF)
+#+END_SRC
+
+[[./img/trainingNAmesPorchDeck.png]]
+
+Nothing is immediately apparent. Let's fall back to tests.
+
+We'll just be using spearman's Rho, and the testing data.
+#+BEGIN_SRC R
+cor.test(trainingNAmes$OpenPorchSF, trainingNAmes$WoodDeckSF, method="kendall")
+
+# 	Kendall's rank correlation tau
+
+# data:  trainingNAmes$OpenPorchSF and trainingNAmes$WoodDeckSF
+# z = 0.72579, p-value = 0.468
+# alternative hypothesis: true tau is not equal to 0
+# sample estimates:
+#        tau 
+# 0.08531233 
+
+#+END_SRC
+
+Hmm no correlation. Let's try filtering out all the houses that don't have porches.
+
+#+BEGIN_SRC R
+cor.test(trainingNAmes[trainingNAmes$OpenPorchSF != 0,]$OpenPorchSF, trainingNAmes[trainingNAmes$OpenPorchSF != 0,]$WoodDeckSF, method="spearman")
+
+
+# 	Spearman's rank correlation rho
+
+# data:  trainingNAmes[trainingNAmes$OpenPorchSF != 0, ]$OpenPorchSF and trainingNAmes[trainingNAmes$OpenPorchSF != 0, ]$WoodDeckSF
+# S = 1485.8, p-value = 0.08969
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.3539844 
+
+# Warning message:
+# In cor.test.default(trainingNAmes[trainingNAmes$OpenPorchSF != 0,  :
+#   Cannot compute exact p-value with ties
+
+#+END_SRC
+
+I'm not sure what the warning message means. But there are only 8 (!) elements in these datasets, which probably means a tie, and also probably means that our close to 0.05 p-value is not reliable.
+
+It seems comparing within the neighborhood is too restrictive. Let's try throughout Boston:
+
+#+BEGIN_SRC R
+plot(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF)
+#+END_SRC
+
+[[./img/trainingdatPorchDeck.png]]
+
+#+BEGIN_SRC R
+cor.test(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF, method="spearman")
+
+# 	Spearman's rank correlation rho
+
+# data:  trainingdat$OpenPorchSF and trainingdat$WoodDeckSF
+# S = 199780000, p-value = 0.003951
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# 0.08703042 
+
+# Warning message:
+# In cor.test.default(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF,  :
+#   Cannot compute exact p-value with ties
+#+END_SRC
+
+Ooh, exciting! However that pesky error message is still there. We can try using kendall's test (which is another rank correlation, and thus does not depend on normality and is robust to outliers:
+
+#+BEGIN_SRC R
+> cor.test(trainingdat$OpenPorchSF, trainingdat$WoodDeckSF, method="kendall")
+
+# 	Kendall's rank correlation tau
+
+# data:  trainingdat$OpenPorchSF and trainingdat$WoodDeckSF
+# z = 2.958, p-value = 0.003097
+# alternative hypothesis: true tau is not equal to 0
+# sample estimates:
+#        tau 
+# 0.06960081 
+#+END_SRC
+
+Since the p-value is <0.05 and our results are yes/no, we can conclude that there indeed is a correlation between the sizes of porches and wood decks. A possible next step is finding a glm model to find out the extent of this correlation (is tau a good indicator?). The reason I think this is important is that these two were the biggest contributors to average price increases, so the fact that they are comorbid implies that their effect is diminished.
+
+
+A possible next step is to perform a complete analysis on the correlations between each aspect of the house. This will be a little time consuming, as there are 6! of these, 720 tests (it can be automated, of course, we have computers).
