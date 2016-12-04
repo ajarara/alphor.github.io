@@ -1,0 +1,21 @@
+* Data Analysis 584
+* High level overview
+** Variable analysis
+Our task was to find a model that predicted the sale price of a home with respect to the following eight parameters:
+*** 1stFlrSF
+*** 2ndFlrSF
+*** WoodDeckSF
+*** OpenPorchSF
+*** YearBuilt
+*** BsmtSF
+*** Neighborhood
+*** Street
+** Initial ideas
+*** Elimination of street type from the model
+Two levels of gravel and pavement: Only 6 datapoints deviated from the vast majority. So remove it from our model, there is little reason to include it.
+The aim of most analysis is not to fit the formula to the data you have, but instead have the model accurately predict new elements. This is why we split the data into testing and training data. However, the reality is that any model we come up with that includes Street type as a parameter would be unreliable. So we drop it from the model.
+** Zhezhi:
+*** initial model was a simple regression against all parameters
+(including street pavement)
+Found that there was heteroskedasticity in the fitted compared to the residuals of the response variable
+Show pic1: this is 
