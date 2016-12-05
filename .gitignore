@@ -1,3 +1,7 @@
 .Rhistory
 BHD.csv
 **.pdf
+latex/*
+slides.*
+!slides.org
+!slides.tex

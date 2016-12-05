@@ -96,7 +96,7 @@ model_final=lm(log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF
 summary(model_final)
 
 #examine the results:
-data_random=rbinom(1460,1,0.0.75)
+data_random=rbinom(1460,1, 0.75)
 data_exm=cbind(mydata,data_random)
 data_exm1=data_exm[data_exm$data_random==0,]
 data_true=data_exm[data_exm$data_random==1,]
@@ -116,6 +116,13 @@ plot(pre_true2, log(data_true$SalePrice))
 #the problem which I interested:
 #if we delete the outliers, will it infect our est_coeff?
 #find the outliers 
+X1stFlrSF = mydata$X1stFlrSF
+X2ndFlrSF = mydata$X2ndFlrSF
+WoodDeckSF = mydata$WoodDeckSF
+OpenPorchSF = mydata$OpenPorchSF
+BsmtSF = mydata$BsmtSF
+
+
 mydata_new=data.frame(mydata,log(mydata$SalePrice))
 mydata_new$SalePrice=NULL
 boxplot(mydata_new)

@@ -24,7 +24,30 @@ Neighborhood: Categorical
 
 *** Neighborhood
 I wanted to place special emphasis on neighborhood, holding it as a standard candle to remove a degree of freedom, and performing exploratory analysis using the other variables. (I later show that this methodology is flawed)
-** Me
+
+** Initial exploration
+
+*** Libraries used (and imports)
+#+BEGIN_SRC R :tangle code.R
+library(library(lmtest)
+library(MASS)
+library(nlme)
+library(DAAG) # needed for cross validation
+
+dat = read.csv("BHD.csv")
+mydata = dat # some code in here refers to mydata instead of dat. They're the same thing.
+#+END_SRC
+
+*** Initial linear regression model
+
+**** Picture
+img/heteroscedastic.png
+**** Desc
+Go over heteroscedasticity first: since the shape is conical, this implies that there are populations within the dataset that vary differently. This provides the motivation for this section, but _conclude_ that the model would be far too difficult to characterize if we split the data in any significant matter, and would likely succumb to overfitting. When you hit the last graph, a good idea would be to mention this overfitting.
+
+Further, there is no guarantee that neighborhood is the right classification.
+
+
 *** Neighborhood
 | Neighborhood | Count | mean(SalePrice) |
 |--------------+-------+-----------------|
@@ -57,13 +80,12 @@ I wanted to place special emphasis on neighborhood, holding it as a standard can
 Since we have the most data to work with in NAmes, we will use this.
 
 A couple things we have to consider when working with a selection of data: We may be introducing bias into our dataset: For example, NAmes might be a very small neighborhood in terms of square feet, and yet it has the most establishments. So we should not look to see trends between it and other neighborhoods, but instead look within it for intuition that might guide us later on.
-**** Initial overview
-IMPORTANT: Go over heteroscedasticity first: since the shape is conical, this implies that there are populations within the dataset that vary differently. This provides the motivation for this section, but _conclude_ that the model would be far too difficult to characterize if we split the data in any significant matter, and would likely succumb to overfitting. When you hit the last graph, a good idea would be to mention this overfitting.
 
-Further, there is no guarantee that neighborhood is the right classification.
+Unfortunately this did not work very well. This method introduced very significant complexity to our would be model. We explore NAmes, CollgCr,
 
-Unfortunately this did not work very well. This method introduced very significant complexity to our would be model. 
+Only need to show one of these, the rest are not modified beyond variable names and underlying data.
 
+Need pictures!
 #+BEGIN_SRC 
 ames = dat[dat$Neighborhood == "NAmes",]
 # remove Neighborhood and Street
@@ -72,6 +94,7 @@ logames = ames
 logames$SalePrice = log(ames$SalePrice)
 pairs(ames, upper.panel = my_line, main="NAmes")
 #+END_SRC
+img/pairNAmes.png
 
 #+BEGIN_SRC 
 coll = dat[dat$Neighborhood == "CollgCr",]
@@ -81,9 +104,9 @@ logcoll = coll
 logcoll$SalePrice = log(coll$SalePrice)
 pairs(coll, upper.panel = my_line, main="CollgCr")
 #+END_SRC
+img/pairCollgCr.png
 
 #+BEGIN_SRC 
-
 timb = dat[dat$Neighborhood == "Timber",]
 # remove Neighborhood and Street
 timb = subset(timb, select = c(-Street,-Neighborhood))
@@ -92,51 +115,27 @@ logtimb$SalePrice = log(timb$SalePrice)
 pairs(timb, upper.panel = my_line, main="Timber")
 
 #+END_SRC
-
+img/pairTimber.png
 
 #+BEGIN_SRC 
 my_line <- function(x,y,...){
     points(x,y,...)
     abline(a = lm(y ~ x)$coefficients[1] , b = lm(y ~ x)$coefficients[2] , ...)
 }
-
 #+END_SRC
 
 Clear correlation between 2nd floor area and pricing, OpenPorch, BsmtSF.
-** Liping
+But this model is way too complicated. The honeymoon ends when we hit any of the neighborhoods with fewer members. We cannot rely on neighborhood to give us reliable regressions.
 
-There is clearly skew. (pg 4 shows a good way to visualize this)
-To remove skew, try log transform on salePrice
-Split the data in two, with rbinom (could be improved)
-
-Slices based on optional parameters.
-
-slice1_1 is the slice with no deck or porch
-slice1_2 is no deck, yes porch
-slice2_1 is yes deck, no porch
-slice2_2 is yes deck, yes porch
-
-Waiting on liping for analysis of these slices.
-** Zhezhi:
-*** initial model was a simple regression against all parameters
-(including street pavement)
-Found that there was heteroskedasticity in the fitted compared to the residuals of the response variable. We need to close off the cone in order to come up with a reasonably accurate model.
-
-Show pic1: this is the model with street type included, salesprice as a response
+*** Complete overview of our data
 #+BEGIN_SRC 
-lmStreet = lm(SalePrice~., data=dat)
-plot(fitted(lmStreet), studres(lmStreet)
+datNoStreet = subset(dat, select = -Street)
+pairs(datNoStreet, upper.panel = my_line, main="Overview")
 #+END_SRC
-Show pic2: this is the model with it not included.
+img/overview.png
 
-#+BEGIN_SRC 
-lmNoStreet = lm(SalePrice~. - Street, data=dat)
-plot(fitted(lmNoStreet), studres(lmNoStreet))
-#+END_SRC
+There are some trends we've noticed before, 1stFloor.. etc. There is no street parameter here because we've taken a subset of the data and removed it. We have not removed the neighborhood column, but since it is not binary it is not shown here by default (it would be incomprehensible at this scale anyway).
 
-There is little difference. There is a possibility that streets provide some insight on other variables in the distribution, ie it correlated with how new a house is (it does not, all but one were built before 1965), but any conclusions based on this would likely not hold up when exposed to a bigger dataset.
-
-Removing Neighborhoods from the model significantly changed the shape of the distribution. Then we kept it in.
 *** Log transform of response
 This removes the large amount of variance as we increase the values in the linear regression.
 
@@ -144,6 +143,7 @@ This removes the large amount of variance as we increase the values in the linea
 logResponse = lm(log(SalePrice)~. - Street, data=dat)
 plot(fitted(logResponse), studres(logResponse))
 #+END_SRC
+img/regOverview.png
 
 However, the residuals (errors) do not follow normal distribution. What we'd like to do is use the generalized least squares estimator to establish correlation and coefficients for our model. To do this, we apply the weight of 1/(residual_i)^2
 
@@ -155,14 +155,48 @@ model_3=gls(log(SalePrice)~.-Street,data=mydata,weights=varFixed(~u_hat))
 qqnorm(resid(model_3))
 qqline(resid(model_3))
 #+END_SRC
+img/weightedModel.png
+
+Since the errors were normally distributed, we have confidence in these results with the specific weight.
 
 The resulting summary showed us which variables significantly affected housing price in Boston.
 
 Among these is the 1st floor, second floor, wood deck square footage, and basement, year built. The coefficients for these are small, but that is because they are per unit increase (ie 1 square foot of a second floor would increase the log(SalePrice) by a small constant, and subsequently the SalePrice by a percentage), hence the discrepancy between the coefficient size and significance.
 
-Following this, we tried various models, some of them linear, but found the best success with segmenting the data based on optional variables, specifically the 2nd floor:
+Following this, we tried various models, some of them linear, but found the best success with segmenting the data based on optional variables, specifically the 2nd floor, allowing us to see the (somewhat mild) interaction between the 1st and second floor SF in the prediction of our salesprice.
+
+Intermediary models
+#+BEGIN_SRC 
+model_4=lm(log(SalePrice)~(X1stFlrSF+X2ndFlrSF+
+             WoodDeckSF+OpenPorchSF+BsmtSF+Neighborhood+YearBuilt)**2+
+             I(X1stFlrSF**2)+I(X2ndFlrSF**2)+
+             I(WoodDeckSF**2)+I(BsmtSF**2),data=mydata)
+             
+#we can see that I(X1stFlrSF^2),X1stFlrSF:X2ndFlrSF is significant,           
+summary(model_4)
+qqnorm(resid(model_4))
+qqline(resid(model_4))
+
+
+data_1=mydata[mydata$X2ndFlrSF > 0,]
+#=data_1[data_1$WoodDeckSF > 0,]
+model_51=lm(log(SalePrice)~.+I(X1stFlrSF**2)+X1stFlrSF:X2ndFlrSF-Street,
+            data=data_1)
+summary(model_51)
+model_52=stepAIC(model_51,direction="both")
+#we can get the following model which is best fit
+#log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF + 
+ # Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2)
+data_2=mydata[mydata$X2ndFlrSF == 0,]
+model_61=lm(log(SalePrice)~.+I(X1stFlrSF**2)-Street,
+            data=data_2)
+summary(model_61)
+model_62=stepAIC(model_61,direction="both")
+
+#+END_SRC
 
 Then came the stepwise analysis, however, with the stepwise AIC (conducted in both directions for multiple models detailed in the assoc'd R report), only the interaction random variable between 1st and 2nd floor SF was added, only in the case of the second floor being included. So we added the interaction to our model, producing:
+
 
 | Parameter           |  Coefficients |
 |---------------------+---------------|
@@ -175,13 +209,11 @@ Then came the stepwise analysis, however, with the stepwise AIC (conducted in bo
 | X1stFlrSF^2         | -1.173194e-07 |
 | X1stFlrSF:X2ndFlrSF | -1.504619e-07 |
 (neighborhood omitted for brevity)
-  
-model_exm<-lm(SalePrice ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF + Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2) + X1stFlrSF:X2ndFlrSF,data=data_true)
 
 *** Data splitting was done binomially
 We created a vector of the length of the dataset, with p = 0.75. Those with observation == 1 were in our training sample, and those without were not. This did have a tendency to eliminate some df specifically with regard to the Neighborhood field. To work around this (by instead selecting proportionally from each neighborhood) would introduce significant selection bias, but there is definite value to keeping neighborhoods in the model, so we did.
 
-If we have time, possibly try this out?
+
 *** Predictions
 
 #+BEGIN_SRC 
@@ -195,17 +227,22 @@ pre_testing = predict(model_accepted, new=data.frame(data_testing))
 plot(pre_testing, log(data_testing$SalePrice))
 
 #+END_SRC
+img/residTesting.png
+
 Pretty good!
 
 *** Cross validation?
-maybe.
+#+BEGIN_SRC 
+CVlm(dat,model_final, m=10)
+#+END_SRC
+img/crossValidation.png
+
+A more strenuous test, it essentially replicates the previous testing, removing 1/10th of the data each time, obtaining the linear coefficients, and giving us the predictions of the removed data with the coefficients generatied from the training data.
+The sum of squares was 4.23
 
 *** Additional musings
 **** Training data proportionally selected from neighborhood
-Now there is a little bit of trouble with this, certain values of neighborhood have very small population, and there is no guarantee that they will be equally represented even when we select proportionally.
-
-
-
+Initially I wanted to see if I could get a good model from proportionally selecting data by neighborhood. However, there was no way I would guarantee a representative of each neighborhood in both the testing and training data without artificially selecting them by hand, which is a mistake. So I resisted the temptation.
 
 **** Outliers
 We did not attempt to treat the outliers. In file img/outincrvl.png, there are a couple of outliers that have very significant leverage, one that is way off the line.
@@ -225,4 +262,3 @@ We remove the outliers above the IQR by sorting and iterating through a for loop
 | X1stFlrSF^2         | -1.173194e-07 |        -1.74e-07 |  48.313067 |
 | X1stFlrSF:X2ndFlrSF | -1.504619e-07 |        -1.58e-07 |  5.0099726 |
 #+TBLFM: $4=100 * ($3-$2)/$2
-
