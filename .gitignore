@@ -5,3 +5,4 @@ latex/*
 slides.*
 !slides.org
 !slides.tex
+!slides.pdf
