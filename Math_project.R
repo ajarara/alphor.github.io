@@ -36,7 +36,7 @@ qqline(studres(model_2))
 #durbin Watson Test
 dwtest(model_2)
 #no correlation
-u_hat=log(SalePrice)-fitted(model_2)
+u_hat=log(mydata$SalePrice)-fitted(model_2)
 u_hat=1/(u_hat**2) 
 model_3=gls(log(SalePrice)~.,data=mydata,weights=varFixed(~u_hat))
 qqnorm(resid(model_3))
@@ -60,7 +60,7 @@ summary(model_3)
 # X1stFlrSF+X2ndFlrSF+WoodDeckSF+OpenPorchSF+BsmtSF
 #Street+Neighborhood+YearBuilt
 model_4=lm(log(SalePrice)~(X1stFlrSF+X2ndFlrSF+
-             WoodDeckSF+OpenPorchSF+BsmtSF+Street+Neighborhood+YearBuilt)**2+
+             WoodDeckSF+OpenPorchSF+BsmtSF+Neighborhood+YearBuilt)**2+
              I(X1stFlrSF**2)+I(X2ndFlrSF**2)+
              I(WoodDeckSF**2)+I(BsmtSF**2),data=mydata)
              
@@ -87,16 +87,16 @@ summary(model_61)
 model_62=stepAIC(model_61,direction="both")
 #we can get the following model which is best fit
 #log(SalePrice) ~ X1stFlrSF + WoodDeckSF + OpenPorchSF + Neighborhood + 
- # BsmtSF + YearBuilt + I(X1stFlrSF^2) 
+# BsmtSF + YearBuilt + I(X1stFlrSF^2) 
 #combine the two results, we get:
 #log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF + 
 # Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2)
 model_final=lm(log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF +
-                 Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2),data=mydata)
+                 Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2) + X1stFlrSF:X2ndFlrSF,data=mydata)
 summary(model_final)
 
 #examine the results:
-data_random=rbinom(1460,1,0.5)
+data_random=rbinom(1460,1,0.0.75)
 data_exm=cbind(mydata,data_random)
 data_exm1=data_exm[data_exm$data_random==0,]
 data_true=data_exm[data_exm$data_random==1,]
@@ -104,6 +104,13 @@ model_exm<-lm(log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF 
                  Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2),data=data_exm1)
 pre_true=predict(model_exm,new=data.frame(data_true))
 plot(pre_true,log(data_true$SalePrice))
+
+model_exm2<-lm(log(SalePrice) ~ X1stFlrSF + X2ndFlrSF + WoodDeckSF + OpenPorchSF +
+                 Neighborhood + BsmtSF + YearBuilt + I(X1stFlrSF^2) + X1stFlrSF:X2ndFlrSF,data=data_exm1)
+pre_true2=predict(model_exm2, new=data.frame(data_true))
+plot(pre_true2, log(data_true$SalePrice))
+
+
 #we can see that it predict very well.
 
 #the problem which I interested:
