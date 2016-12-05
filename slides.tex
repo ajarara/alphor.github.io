@@ -40,12 +40,12 @@
 %\usetheme{Ilmenau}
 %\usetheme{JuanLesPins}
 %\usetheme{Luebeck}
-\usetheme{Madrid}
+%\usetheme{Madrid}
 %\usetheme{Malmoe}
 %\usetheme{Marburg}
 %\usetheme{Montpellier}
 %\usetheme{PaloAlto}
-%\usetheme{Pittsburgh}
+\usetheme{Pittsburgh}
 %\usetheme{Rochester}
 %\usetheme{Singapore}
 %\usetheme{Szeged}
@@ -83,14 +83,14 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Short title]{Full Title of the Talk} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[BHD]{Boston Housing Regression Analysis} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{John Smith} % Your name
-\institute[UCLA] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+\author{Liping Gu, Zhezhi Hou, Ahmad Jarara} % Your name
+\institute[BU] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
-University of California \\ % Your institution for the title page
+Binghamton University \\ % Your institution for the title page
 \medskip
-\textit{john@smith.com} % Your email address
+%\textit{} % Your email address
 }
 \date{\today} % Date, can be changed to a custom date
 
@@ -105,155 +105,313 @@ University of California \\ % Your institution for the title page
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-%	PRESENTATION SLIDES
-%----------------------------------------------------------------------------------------
-
-%------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
-%------------------------------------------------
-
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
-
 \begin{frame}
-\frametitle{Paragraphs of Text}
-Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.\\~\\
-
-Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio. Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis. Vestibulum ultrices tincidunt libero, quis commodo erat ullamcorper id.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Bullet Points}
+\section{High Level Overview}
+\frametitle{High Level Overview}
 \begin{itemize}
-\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-\item Nam cursus est eget velit posuere pellentesque
-\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
+\item Variable Analysis
+\item Model Trimming
+\item Featured Variables
+\item Neighborhood Analysis
+\item Model Selection
 \end{itemize}
 \end{frame}
 
-%------------------------------------------------
 
+%\subsection{Variable Analysis}
 \begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
-\end{block}
+\frametitle{Variable Analysis}
+\begin{itemize}
+\item 1stFlrSF
+\item 2ndFlrSF
+\item WoodDeckSF
+\item OpenPorchSF
+\item YearBuilt
+\item BsmtSF
+\item Neighborhood
+\item Street
+\end{itemize}
 \end{frame}
 
-%------------------------------------------------
 
+%\subsection{Model trimming}
 \begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+\frametitle{Model trimming}
 
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
+We eliminate the Street attribute from our model.\\~\\
 
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
+The aim of this analysis is not to overfit the formula to the little data we have, but instead have our model be the best at accurately predicting new elements. 
 \end{frame}
 
-%------------------------------------------------
-\section{Second Section}
-%------------------------------------------------
+%\subsection{Featured Variables}
+\begin{frame}
+\frametitle{Featured Variables}
+\begin{itemize}
+\item X2ndFlrSF
+\item WoodDeckSF
+\item OpenPorchSF
+\item BasementSF
+\end{itemize}
+\end{frame}
+
+%\subsection{Neighborhood Analysis}
+\begin{frame}
+\frametitle{Model trimming}
+
+Special emphasis on neighborhood.\\~\\
+
+This removes degrees of freedom from the analysis and allows for more emphasis on other attributes.
+
+However, this methodology is significantly flawed!
+\end{frame}
+
+%\subsection{Model Selection}
+\begin{frame}
+\frametitle{Model Selection}
+
+Very small sample size suggests a lax model.\\~\\
+
+Pitfalls of a complex analysis:
+\begin{itemize}
+  \item Rigid model
+  \item Simpson's Paradox
+\end{itemize}
+  
+Then a simple linear regression is most likely the correct one.
+\end{frame}
+
 
 \begin{frame}
-\frametitle{Table}
+\section{Model Instantiation}
+\frametitle{Model Instantiation}
+\begin{itemize}
+\item Initial Linear Regression Model
+\item Neighborhood Segregation
+\item Correlation Study
+\item Applying Transformations
+\item Intermediary Models and Stepwise Analysis
+\item Final Model
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Initial Linear Regression Model}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/heteroscedastic.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Neighborhood Segregation}
 \begin{table}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
+\textbf{Neighborhood} & \textbf{Count} & \textbf{mean(SalePrice)}\\
 \midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
+NAmes        &   225 &        145847.1 \\
+CollgCr      &   150 &        197965.8 \\
+OldTown      &   113 &        128225.3 \\
+NWAmes       &    73 &        189050.1 \\
+Timber       &    38 &        242247.4 \\
+IDOTRR       &    37 &        100123.8 \\
+ClearCr      &    28 &        212565.4 \\
+StoneBr      &    25 &          310499 \\
+SWISU        &    25 &        142591.4 \\
+Blmngtn      &    17 &        194870.9 \\
+MeadowV      &    17 &        98576.47 \\
+NPkVill      &     9 &        142694.4 \\
+Blueste      &     2 &          137500 \\
 \bottomrule
 \end{tabular}
-\caption{Table caption}
+\caption{(Omission of other neighborhoods for brevity)}
 \end{table}
 \end{frame}
 
-%------------------------------------------------
 
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+\frametitle{Neighborhood Segregation Pt. 2}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/pairNAmes.png}
+\end{figure}
 \end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
-\end{frame}
-
-%------------------------------------------------
 
 \begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
+\frametitle{Neighborhood Segregation Pt. 2}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/pairCollgCr.png}
+\end{figure}
 \end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation \cite{p1}.
-\end{frame}
-
-%------------------------------------------------
 
 \begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
-\end{thebibliography}
-}
+\frametitle{Neighborhood Segregation Pt. 2}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/pairTimber.png}
+\end{figure}
 \end{frame}
 
-%------------------------------------------------
 
 \begin{frame}
-\Huge{\centerline{The End}}
+\Huge{\centerline{Ignore all that craziness...}}
 \end{frame}
 
-%----------------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Correlation Study}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/overview.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Pesky Heteroscedasticity}
+\begin{itemize}
+\item Removing neighborhoods stands to lose too much
+\item Large amount of variance means an inaccurate regression.
+\item  Solution? Apply log transform!
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Applying Transformations}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/regOverview.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Applying Transformations Pt. 2}
+  The residuals do not follow normal distribution. \\~\\
+  The solution to this is to use the generalized least squares estimator to establish correlation and coefficients for our model.\\~\\
+  We do this by applying the weight of $1/\epsilon_i^2$.
+  
+  \end{frame}
+
+
+  \begin{frame}
+\frametitle{Applying Transformations Pt. 3}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/weightedModel.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Applying Transformations Pt. 4}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/outincrvl.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Intermediary Models and Stepwise Analysis}
+Relevant variables include:
+\begin{itemize}
+\item X1stFlrSF
+\item X2ndFlrSF
+\item WoodDeckSF
+\item BsmtSF
+\item YearBuilt
+\end{itemize}
+We observed a strong quadratic trend in our correlation analysis, so we included X1stFlrSF$^2$ in our model.\\
+Further, we used a stepAIC in both directions, and the only variable it came up with was an interaction variable between the first and second floors. We used that as well.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Final Model}
+\begin{table}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Attribute} & \textbf{Coefficient}\\
+\midrule
+ X1stFlrSF           &  0.0008023042 \\
+ X2ndFlrSF           &  0.0005162776 \\
+ WoodDeckSF          &   0.000210046 \\
+ OpenPorchSF         &  0.0003655512 \\
+ BsmtSF              &  0.0001368659 \\
+ YearBuilt           &   0.004020196 \\
+ X1stFlrSF$^2$         & -1.173194e-07 \\
+ X1stFlrSF:X2ndFlrSF & -1.504619e-07 \\
+\bottomrule
+\end{tabular}
+\caption{Neighborhoods omitted for brevity}
+\end{table}
+\end{frame}
+
+
+
+\begin{frame}
+\section{Model Verification}
+\frametitle{Model Verification}
+\begin{itemize}
+  \item Predictions
+\item Graphical Confirmation
+\item Cross Validation
+\item Additional Musings
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Predictions}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/residTesting.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\Huge{\centerline{Drumroll...}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Cross Validation}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/crossValidation.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Additional Musings}
+  Training data proportionally selected from neighborhood
+\begin{itemize}
+\item Is there a better model by selecting by neighborhood?
+\item No guarantees without guarantees
+\end{itemize}
+\end{frame}
+
+  \begin{frame}
+\frametitle{Outlier Treatment}
+\begin{figure}
+\includegraphics[width=0.75\linewidth,keepaspectratio=true]{img/outlierboxplot.png}
+\end{figure}
+\end{frame}
+
+
+ \begin{frame}
+ \frametitle{Outlier Treatment Pt. 2}
+ \begin{table}
+ \begin{tabular}{l l l l}
+ \toprule
+ \textbf{Parameter} & \textbf{Old Coef} & \textbf{New Coef} & \textbf{Percentage}\\
+ \midrule
+ X1stFlrSF           &  0.0008023042 &         0.000972 &  21.151055 \\
+ X2ndFlrSF           &  0.0005162776 &         0.000545 &  5.5633636 \\
+ WoodDeckSF          &   0.000210046 &         0.000216 &  2.8346172 \\
+ OpenPorchSF         &  0.0003655512 &         0.000265 & -27.506735 \\
+ BsmtSF              &  0.0001368659 &         0.000138 & 0.82862130 \\
+ YearBuilt           &   0.004020196 &          0.00361 & -10.203383 \\
+ X1stFlrSF$^2$         & -1.173194e-07 &        -1.74e-07 &  48.313067 \\
+ X1stFlrSF:X2ndFlrSF & -1.504619e-07 &        -1.58e-07 &  5.0099726 \\
+ \bottomrule
+ \end{tabular}
+  \end{table}
+ \end{frame}
+
+
+
+
+\begin{frame}
+\Huge{\centerline{Thank you!}}
+\end{frame}
 
 \end{document} 

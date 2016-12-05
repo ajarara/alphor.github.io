@@ -29,13 +29,17 @@ I wanted to place special emphasis on neighborhood, holding it as a standard can
 
 *** Libraries used (and imports)
 #+BEGIN_SRC R :tangle code.R
-library(library(lmtest)
+
+# libraries used
+library(lmtest)
 library(MASS)
 library(nlme)
 library(DAAG) # needed for cross validation
 
+# setup
 dat = read.csv("BHD.csv")
 mydata = dat # some code in here refers to mydata instead of dat. They're the same thing.
+
 #+END_SRC
 
 *** Initial linear regression model
@@ -85,8 +89,9 @@ Unfortunately this did not work very well. This method introduced very significa
 
 Only need to show one of these, the rest are not modified beyond variable names and underlying data.
 
-Need pictures!
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# img/pairNAmes.png
 ames = dat[dat$Neighborhood == "NAmes",]
 # remove Neighborhood and Street
 ames = subset(ames, select = c(-Street,-Neighborhood))
@@ -96,7 +101,9 @@ pairs(ames, upper.panel = my_line, main="NAmes")
 #+END_SRC
 img/pairNAmes.png
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# img/pairCollgCr.png
 coll = dat[dat$Neighborhood == "CollgCr",]
 # remove Neighborhood and Street
 coll = subset(coll, select = c(-Street,-Neighborhood))
@@ -106,7 +113,9 @@ pairs(coll, upper.panel = my_line, main="CollgCr")
 #+END_SRC
 img/pairCollgCr.png
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# img/pairTimber.png
 timb = dat[dat$Neighborhood == "Timber",]
 # remove Neighborhood and Street
 timb = subset(timb, select = c(-Street,-Neighborhood))
@@ -117,7 +126,9 @@ pairs(timb, upper.panel = my_line, main="Timber")
 #+END_SRC
 img/pairTimber.png
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# line of best fit function for previous pairs graphs
 my_line <- function(x,y,...){
     points(x,y,...)
     abline(a = lm(y ~ x)$coefficients[1] , b = lm(y ~ x)$coefficients[2] , ...)
@@ -127,9 +138,16 @@ my_line <- function(x,y,...){
 Clear correlation between 2nd floor area and pricing, OpenPorch, BsmtSF.
 But this model is way too complicated. The honeymoon ends when we hit any of the neighborhoods with fewer members. We cannot rely on neighborhood to give us reliable regressions.
 
+*** Simple linear regression
+Issue: sample size
+Initially when we first recieved this project, I thought the 1460 values given to us were graceful. They turned out to be a significant hindrance in allowing us to get a model that was better fitting, as there would be a lot of outliers. Further, as mentioned before with the disregarding of Street type, we should not be overfitting to our distribution. There are pitfalls to doing so, especially with such a small sample size. Simpson's paradox example.
+
+Then the decision to go with a simple linear regression is most likely the correct one, as you can always drop out to a glm if the data you receive is contrary to your model. However, as we cannot rely on extra data in this case, the best bet is to go with the simplest one: linear regression.
 *** Complete overview of our data
-#+BEGIN_SRC 
-datNoStreet = subset(dat, select = -Street)
+#+BEGIN_SRC R :tangle code.R 
+
+# simple overview
+datNoStreet = subset(dat, select = c(-Street,-Neighborhood))
 pairs(datNoStreet, upper.panel = my_line, main="Overview")
 #+END_SRC
 img/overview.png
@@ -139,7 +157,9 @@ There are some trends we've noticed before, 1stFloor.. etc. There is no street p
 *** Log transform of response
 This removes the large amount of variance as we increase the values in the linear regression.
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# Regression overview
 logResponse = lm(log(SalePrice)~. - Street, data=dat)
 plot(fitted(logResponse), studres(logResponse))
 #+END_SRC
@@ -147,7 +167,9 @@ img/regOverview.png
 
 However, the residuals (errors) do not follow normal distribution. What we'd like to do is use the generalized least squares estimator to establish correlation and coefficients for our model. To do this, we apply the weight of 1/(residual_i)^2
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# Weighted model
 model_2=lm(log(SalePrice)~.-Street,data=mydata)
 u_hat=log(mydata$SalePrice)-fitted(model_2)
 u_hat=1/(u_hat**2) 
@@ -166,7 +188,9 @@ Among these is the 1st floor, second floor, wood deck square footage, and baseme
 Following this, we tried various models, some of them linear, but found the best success with segmenting the data based on optional variables, specifically the 2nd floor, allowing us to see the (somewhat mild) interaction between the 1st and second floor SF in the prediction of our salesprice.
 
 Intermediary models
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# Intermediary models
 model_4=lm(log(SalePrice)~(X1stFlrSF+X2ndFlrSF+
              WoodDeckSF+OpenPorchSF+BsmtSF+Neighborhood+YearBuilt)**2+
              I(X1stFlrSF**2)+I(X2ndFlrSF**2)+
@@ -216,7 +240,9 @@ We created a vector of the length of the dataset, with p = 0.75. Those with obse
 
 *** Predictions
 
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# Predictions
 selection=rbinom(1460, 1, 0.75)
 data_training = mydata[selection == 1,]
 data_testing = mydata[selection == 0,]
@@ -232,7 +258,9 @@ img/residTesting.png
 Pretty good!
 
 *** Cross validation?
-#+BEGIN_SRC 
+#+BEGIN_SRC R :tangle code.R 
+
+# Cross validation
 CVlm(dat,model_final, m=10)
 #+END_SRC
 img/crossValidation.png
